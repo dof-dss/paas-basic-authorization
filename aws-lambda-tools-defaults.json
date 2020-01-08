@@ -1,0 +1,15 @@
+
+{
+    "region" : "eu-west-2",
+    "profile" : "dof",
+    "configuration" : "Release",
+    "framework"     : "netcoreapp2.1",
+    "function-name" : "paas-basic-authorization",
+    "function-handler" : "paas-basic-authorization::paas_basic_authorization.Function::FunctionHandler",
+    "function-memory-size" : 256,
+    "function-role"        : "arn:aws:iam::111094818217:role/service-role/ea-api-gateway-lambda-role",
+    "function-timeout"     : 10,
+    "function-runtime"     : "dotnetcore2.1",
+    "tracing-mode"         : "PassThrough",
+    "environment-variables" : ""
+}

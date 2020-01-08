@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Amazon.Lambda.APIGatewayEvents;
-using ea_api_gateway_lambda.Contracts;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace ea_api_gateway_lambda
+namespace paas_basic_authorization
 {
     public interface IApiGatewayHandler
     {
@@ -17,22 +17,16 @@ namespace ea_api_gateway_lambda
 
     public abstract class ApiGatewayHandler : IApiGatewayHandler
     {
-        protected IApiGatewayManager ApiGatewayManager;
+        protected HttpClient HttpClient;
         protected JsonSerializerSettings JsonSettings { get; set; }
         protected Dictionary<string, string> Headers { get; set; }
         protected APIGatewayProxyRequest Request { get; set; }
-        protected IDictionary<string, Func<Task<APIGatewayProxyResponse>>> GatewayFunctionMapper;
 
-        public virtual async Task<APIGatewayProxyResponse> Execute()
-        {
-            return GatewayFunctionMapper.ContainsKey(Request.Resource) ?
-                await GatewayFunctionMapper[Request.Resource]()
-                : throw new NotImplementedException($"Http {Request.Resource} not implemented ");
-        }
+        public abstract Task<APIGatewayProxyResponse> Execute();
 
-        protected ApiGatewayHandler(IApiGatewayManager apiGatewayManager, APIGatewayProxyRequest request)
+        protected ApiGatewayHandler(HttpClient httpClient, APIGatewayProxyRequest request)
         {
-            ApiGatewayManager = apiGatewayManager;
+            HttpClient = httpClient;
             Headers = new Dictionary<string, string>
             {
                 {"Access-Control-Allow-Origin", "*"},
@@ -41,16 +35,15 @@ namespace ea_api_gateway_lambda
             };
             JsonSettings = new JsonSerializerSettings {ContractResolver = new CamelCasePropertyNamesContractResolver()};
             Request = request;
-            GatewayFunctionMapper = new Dictionary<string, Func<Task<APIGatewayProxyResponse>>>();
         }
 
-        protected APIGatewayProxyResponse GetAPIGatewayResponse(HttpStatusCode statusCode, object responseContent)
+        protected APIGatewayProxyResponse GetAPIGatewayResponse(HttpStatusCode statusCode, string responseContent)
         {
             return new APIGatewayProxyResponse
             {
                 Headers = this.Headers,
                 StatusCode = (int)statusCode,
-                Body = responseContent != null ? JsonConvert.SerializeObject(responseContent, JsonSettings) : string.Empty
+                Body = responseContent
             };
         }
     }

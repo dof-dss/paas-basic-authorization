@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
@@ -7,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 
-namespace ea_api_gateway_lambda
+namespace paas_basic_authorization
 {
     public class Function
     {
@@ -35,6 +36,14 @@ namespace ea_api_gateway_lambda
         {
             _serviceCollection = new ServiceCollection();
             _serviceCollection.AddTransient<App>();
+            _serviceCollection.AddHttpClient("paas", client =>
+            {
+                client.BaseAddress = new Uri(Environment.GetEnvironmentVariable("url"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                    "Basic", Convert.ToBase64String(
+                        System.Text.ASCIIEncoding.ASCII.GetBytes(
+                            $"{Environment.GetEnvironmentVariable("username")}:{Environment.GetEnvironmentVariable("password")}")));
+            });
             _serviceCollection.AddScoped<IApiGatewayHandlerFactory, ApiGatewayHandlerFactory>();
 
             _serviceProvider = _serviceCollection.BuildServiceProvider();

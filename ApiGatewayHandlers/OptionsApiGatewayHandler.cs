@@ -1,13 +1,13 @@
 ﻿using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Amazon.Lambda.APIGatewayEvents;
-using ea_api_gateway_lambda.Contracts;
 
-namespace ea_api_gateway_lambda
+namespace paas_basic_authorization
 {
     public class OptionsApiGatewayHandler : ApiGatewayHandler
     {
-        public OptionsApiGatewayHandler(IApiGatewayManager apiGatewayManager, APIGatewayProxyRequest request) : base(apiGatewayManager, request)
+        public OptionsApiGatewayHandler(HttpClient httpClient, APIGatewayProxyRequest request) : base(httpClient, request)
         {
         }
 

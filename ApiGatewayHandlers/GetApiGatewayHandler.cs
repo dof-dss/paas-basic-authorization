@@ -1,27 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Amazon.Lambda.APIGatewayEvents;
-using ea_api_gateway_lambda.Contracts;
 
-namespace ea_api_gateway_lambda
+namespace paas_basic_authorization
 {
     public class GetApiGatewayHandler : ApiGatewayHandler
     {
-        public GetApiGatewayHandler(IApiGatewayManager apiGatewayManager, APIGatewayProxyRequest request) : base(apiGatewayManager, request)
+        public GetApiGatewayHandler(HttpClient httpClient, APIGatewayProxyRequest request) : base(httpClient, request)
         {
-            GatewayFunctionMapper.Add("/all", GetAll);
-            GatewayFunctionMapper.Add("/get", Get);
         }
 
-        private async Task<APIGatewayProxyResponse> GetAll() => 
-            GetAPIGatewayResponse(HttpStatusCode.OK, await ApiGatewayManager.GetAll());
-
-        private async Task<APIGatewayProxyResponse> Get() =>
-            GetAPIGatewayResponse(HttpStatusCode.OK,
-                await ApiGatewayManager.Get(Request.QueryStringParameters["id"]));
-
+        public override async Task<APIGatewayProxyResponse> Execute()
+        {
+            var result = await HttpClient.GetAsync(string.Empty);
+            return GetAPIGatewayResponse(result.StatusCode, await result.Content.ReadAsStringAsync());
+        }
     }
 }

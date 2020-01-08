@@ -1,18 +1,19 @@
 ﻿using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Amazon.Lambda.APIGatewayEvents;
-using ea_api_gateway_lambda.Contracts;
 
-namespace ea_api_gateway_lambda
+namespace paas_basic_authorization
 {
     public class PostApiGatewayHandler : ApiGatewayHandler
     {
-        public PostApiGatewayHandler(IApiGatewayManager apiGatewayManager, APIGatewayProxyRequest request) : base(apiGatewayManager, request)
+        public PostApiGatewayHandler(HttpClient httpClient, APIGatewayProxyRequest request) : base(httpClient, request)
         {
-            GatewayFunctionMapper.Add("/create", Post);
         }
-        private async Task<APIGatewayProxyResponse> Post() =>
-            GetAPIGatewayResponse(HttpStatusCode.Created,
-                await ApiGatewayManager.Post(Request.QueryStringParameters["something"]));
+
+        public override Task<APIGatewayProxyResponse> Execute()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

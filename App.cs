@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Amazon.Lambda.APIGatewayEvents;
 
-namespace ea_api_gateway_lambda
+namespace paas_basic_authorization
 {
     public class App
     {
