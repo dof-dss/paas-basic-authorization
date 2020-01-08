@@ -1,4 +1,4 @@
-# AWS Lambda API Gateway Lambda Template
+# Lambda to provide Basic Authentication for PaaS
 
 This starter project consists of:
 * Function.cs - class file containing a class with a single function handler method
